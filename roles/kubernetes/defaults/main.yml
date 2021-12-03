@@ -1,0 +1,19 @@
+---
+calico_cni_image: "{{ docker_repo_address }}/calico/cni:v3.20.2"
+calico_pod2daemon_flexvol_image: "{{ docker_repo_address }}/calico/pod2daemon-flexvol:v3.20.2"
+calico_node_image: "{{ docker_repo_address }}/calico/node:v3.20.2"
+calico_kube_controllers_image: "{{ docker_repo_address }}/calico/kube-controllers:v3.20.2"
+
+nginx_ingress_controller_image: "{{ docker_repo_address }}/ingress-nginx/ingress-nginx-controller:0.30.0"
+
+dashboard_metrics_image: "{{ docker_repo_address }}/dashboard/metrics-scraper:v1.0.6"
+dashboard_deploy_image: "{{ docker_repo_address }}/dashboard/dashboard:v2.2.0"
+dashboard_metrics_server_image: "{{ docker_repo_address }}/dashboard/metrics-server:0.4.4"
+
+
+k8s_apply_yaml_path: "/tmp/k8s"
+dashboard_address: "dashboard.moumou.local"
+dashboard_port_http: 30249
+dashboard_port_https: 32767
+
+add_slave_key_path: "/tmp"

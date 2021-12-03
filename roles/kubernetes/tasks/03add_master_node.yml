@@ -1,0 +1,26 @@
+- name: kubernetes master slaves inspect join commod
+  shell: kubeadm token create --print-join-command --certificate-key {{ discovery_token_certs.stdout }} > {{ k8s_apply_yaml_path }}/k8s_add_master_node.key
+  when: inventory_hostname in groups['kubernetes_master']
+
+- name: pull k8s_add_master_node file
+  fetch:  dest=/tmp/k8s_add_master_node.key  src={{ k8s_apply_yaml_path }}/k8s_add_master_node.key  flat=yes
+  when: inventory_hostname in groups['kubernetes_master']
+
+- name: push k8s_add_master_node file  to master node
+  copy: src=/tmp/k8s_add_master_node.key  dest={{ add_slave_key_path }}/
+  when: inventory_hostname  in groups['kubernetes_master_slaves']
+
+- name: check 10250 port
+  wait_for:
+    port: "10250"
+    delay: 10
+    timeout: 20
+  ignore_errors: True
+  register: check_master_port_output
+
+
+- name: add k8s master node
+  shell: $(cat {{ add_slave_key_path }}/k8s_add_master_node.key)
+  when: inventory_hostname  in groups['kubernetes_master_slaves'] and check_master_port_output is failed
+
+

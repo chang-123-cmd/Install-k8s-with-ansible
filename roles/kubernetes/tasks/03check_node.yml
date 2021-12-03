@@ -1,0 +1,3 @@
+- name: check node number and remove taint
+  shell: if [ `kubectl get nodes  | grep none| wc -l` == 0  ]; then     kubectl get node | grep master | awk '{print $1}'   | xargs -I {} kubectl taint nodes  {} node-role.kubernetes.io/master:NoSchedule-  ;fi
+  when: inventory_hostname  in groups['kubernetes_master_slaves'] or inventory_hostname  in groups['kubernetes_master']

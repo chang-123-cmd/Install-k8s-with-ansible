@@ -1,0 +1,14 @@
+---
+
+#---------------------------------
+# 1. prepare
+#---------------------------------
+- hosts:
+    - kubernetes
+  tasks:
+    - name: "Load artifacts info"
+      action: resolve_artifacts
+
+    - include_role: name=prepare
+  vars_files:
+    - ../shared.yml

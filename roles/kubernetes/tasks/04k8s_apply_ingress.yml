@@ -1,0 +1,16 @@
+- name: Copy ingress mandatory config
+  template: src=../templates/mandatory.yaml.j2 dest={{ k8s_apply_yaml_path }}/mandatory.yaml mode=0744
+  when: inventory_hostname  in groups['kubernetes_master']
+
+- name: Copy ingress service config
+  template: src=../templates/service-nodeport.yaml.j2 dest={{ k8s_apply_yaml_path }}/service-nodeport.yaml mode=0744
+  when: inventory_hostname  in groups['kubernetes_master']
+
+- name: create ingress mandatory
+  shell: kubectl apply -f {{ k8s_apply_yaml_path }}/mandatory.yaml
+  when: inventory_hostname  in groups['kubernetes_master']
+
+- name: create ingress service
+  shell:  kubectl apply -f {{ k8s_apply_yaml_path}}/service-nodeport.yaml
+  when: inventory_hostname  in groups['kubernetes_master']
+

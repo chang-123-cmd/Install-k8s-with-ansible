@@ -1,0 +1,14 @@
+---
+
+#---------------------------------
+# 3. docker install
+#---------------------------------
+- hosts:
+    - docker
+  tasks:
+    - name: "Load artifacts info"
+      action: resolve_artifacts
+
+    - include_role: name=install_docker
+  vars_files:
+    - ../shared.yml

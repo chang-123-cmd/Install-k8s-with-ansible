@@ -1,0 +1,11 @@
+---
+
+docker_conf_path: /etc/docker
+
+kubernetes_baseurl: "http://{{ repo }}/kubernetes/kubernetes/"
+
+docker_ce_baseurl: "http://{{ repo }}/kubernetes/docker-ce-stable/"
+
+extras_for_containerd_baseurl: "http://{{ repo }}/kubernetes/extras-for-containerd/"
+
+

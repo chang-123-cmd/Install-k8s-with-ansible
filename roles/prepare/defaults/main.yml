@@ -1,0 +1,5 @@
+---
+
+ntp_server: "{{ groups['kubernetes_master'][0] }}"
+
+default_domain: "moumou.local"

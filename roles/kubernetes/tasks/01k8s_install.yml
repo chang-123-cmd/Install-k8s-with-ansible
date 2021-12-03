@@ -1,0 +1,9 @@
+- name: Install k8s kubeadm
+  package: name=kubeadm state=present
+- name: Install k8s kubelet
+  package: name=kubelet state=present
+- name: start kubelet
+  service:  name=kubelet state=started enabled=yes
+- name: Install k8s kubectl
+  package: name=kubectl state=present
+

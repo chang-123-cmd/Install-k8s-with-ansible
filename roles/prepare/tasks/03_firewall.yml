@@ -1,0 +1,7 @@
+---
+# Firewall
+
+- name: "<RedHat> Disable firewall"
+  systemd: name=firewalld state=stopped enabled=no
+  when: ansible_os_family == 'RedHat' and ansible_service_mgr == "systemd"
+  failed_when: false

@@ -1,0 +1,13 @@
+---
+
+- import_tasks: 02_common.yml
+
+- import_tasks: 03_firewall.yml
+
+- import_tasks: 04_hostname.yml
+
+- import_tasks: 05_install_ntp_or_chrony.yml
+
+- import_tasks: 06_swap.yml
+
+- import_tasks: 07_kernel.yml

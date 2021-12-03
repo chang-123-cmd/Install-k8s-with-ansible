@@ -1,0 +1,17 @@
+---
+
+#---------------------------------
+# 5. k8s install
+#---------------------------------
+- hosts:
+    - kubernetes
+  tasks:
+    - name: "Load artifacts info"
+      action: resolve_artifacts
+
+    - include_role: name=kubernetes
+  vars_files:
+    - ../shared.yml
+
+
+    

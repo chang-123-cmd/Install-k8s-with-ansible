@@ -1,0 +1,19 @@
+[kubernetes]
+baseurl = {{ kubernetes_baseurl }}
+enabled = 1
+gpgcheck = 0
+name = kubernetes
+
+[docker-ce-stable]
+baseurl = {{ docker_ce_baseurl  }}
+enabled = 1
+gpgcheck = 0
+name = docker-ce-stable
+
+[extras-for-containerd]
+baseurl = {{ extras_for_containerd_baseurl }}
+enabled = 1
+gpgcheck = 0
+name = extras-for-containerd
+
+

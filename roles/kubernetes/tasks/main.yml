@@ -1,0 +1,7 @@
+- include: 01k8s_install.yml
+- include: 02master_init.yml
+- include: 03node_init.yml
+- include: 03add_master_node.yml
+- include: 03check_node.yml
+- include: 04k8s_apply_ingress.yml
+- include: 05k8s_apply_dashboard.yml

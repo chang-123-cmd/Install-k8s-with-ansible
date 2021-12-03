@@ -1,0 +1,11 @@
+- name: set kernel config1
+  copy:  src=../file/kernel/containerd.conf  dest=/etc/modules-load.d/containerd.conf
+
+- name: kernel reload1
+  shell: sudo modprobe overlay  && sudo modprobe br_netfilter
+
+- name: Set kernel config2
+  copy:  src=../file/kernel/99-kubernetes-cri.conf dest=/etc/sysctl.d/99-kubernetes-cri.conf
+
+- name: kernel reload2
+  shell: sudo sysctl --system

@@ -1,0 +1,22 @@
+---
+
+#---------------------------------
+# Global config
+#---------------------------------
+
+
+
+#---------------------------------
+## Docker image  repo
+##---------------------------------
+docker_repo_ip: "172.20.*.**"
+docker_repo_address: "registry.***.local:5000"
+docker_repo_domain_name: "registry.***.local"
+
+master_ip: "172.20.*.**"
+kubernetes_api: "apiserver.***.local"
+#---------------------------------
+### package  repo
+###---------------------------------
+#
+repo: "172.20.*.**"

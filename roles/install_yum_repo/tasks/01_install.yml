@@ -1,0 +1,18 @@
+- name: Install httpd
+  package: name=httpd state=present
+
+- name: Restart httpd service
+  service: name=httpd state=started enabled=yes
+
+- name: Create directory
+  file: path={{ package_path }} state=directory
+
+- name: unzip rpm package containerd-selinux
+  unarchive: src={{ containerd_selinux_repo_tarball }}    dest={{ package_path }}/
+- name: unzip rpm package docker-ce-stable
+  unarchive: src={{ docker_ce_repo_tarball }}   dest={{ package_path }}/
+- name: unzip rpm package kubernetes
+  unarchive: src={{ k8s_repo_tarball }}   dest={{ package_path }}/
+
+
+

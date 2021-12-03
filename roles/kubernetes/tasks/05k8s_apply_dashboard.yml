@@ -1,0 +1,35 @@
+- name: Copy deploy config
+  template: src=../templates/dashboard-deploy.yaml.j2  dest={{ k8s_apply_yaml_path }}/dashboard-deploy.yaml
+  when: inventory_hostname  in groups['kubernetes_master']
+
+- name: Copy metrics-server config
+  template: src=../templates/metrics-server.yaml.j2  dest={{ k8s_apply_yaml_path }}/metrics-server.yaml
+  when: inventory_hostname  in groups['kubernetes_master']
+
+- name: Copy dashborad ingress config
+  template: src=../templates/dashboard-ingress.yaml.j2  dest={{ k8s_apply_yaml_path }}/dashboard-ingress.yaml
+  when: inventory_hostname  in groups['kubernetes_master']
+
+- name: Copy admin config
+  copy: src=../file/dashbord-admin-role.yaml  dest={{ k8s_apply_yaml_path }}/dashbord-admin-role.yaml
+  when: inventory_hostname  in groups['kubernetes_master']
+
+- name: Apply dashbord deployment
+  shell: kubectl apply -f {{ k8s_apply_yaml_path }}/dashboard-deploy.yaml
+  when: inventory_hostname  in groups['kubernetes_master']
+
+- name: Apply dashbord service
+  shell: kubectl apply -f {{ k8s_apply_yaml_path }}/metrics-server.yaml
+  when: inventory_hostname  in groups['kubernetes_master']
+
+- name: Apply dashbord ingress
+  shell:  kubectl apply -f {{ k8s_apply_yaml_path }}/dashboard-ingress.yaml
+  when: inventory_hostname  in groups['kubernetes_master']
+
+- name: Create admin
+  shell: kubectl apply -f {{ k8s_apply_yaml_path }}/dashbord-admin-role.yaml
+  when: inventory_hostname  in groups['kubernetes_master']
+
+- name: See dashbord key
+  shell: kubectl -n kube-system get secret `kubectl -n kube-system get sa admin -o jsonpath={.secrets..name}` -o jsonpath={.data..token}|base64 -d  > {{ k8s_apply_yaml_path }}/dashboard.key
+  when: inventory_hostname  in groups['kubernetes_master']

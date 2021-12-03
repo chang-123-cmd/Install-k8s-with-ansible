@@ -1,0 +1,15 @@
+---
+
+#---------------------------------
+# 2. install yum repo
+#---------------------------------
+- hosts:
+    - repo
+  tasks:
+    - name: "Load artifacts info"
+      action: resolve_artifacts
+
+    - include_role: name=install_yum_repo
+  vars_files:
+    - ../shared.yml
+

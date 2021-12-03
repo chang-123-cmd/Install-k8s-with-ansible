@@ -1,0 +1,18 @@
+---
+ceph_rook_image: "{{ docker_repo_address }}/rook/ceph:v1.6.7"
+cephcsi_image: "{{ docker_repo_address }}/ceph/cephcsi:v3.3.1"
+csi_node_driver_registrar_image: "{{ docker_repo_address }}/ceph/csi-node-driver-registrar:v2.2.0"
+csi_resizer_image: "{{ docker_repo_address }}/ceph/csi-resizer:v1.2.0"
+csi_provisioner_image: "{{ docker_repo_address }}/ceph/csi-provisioner:v2.2.2"
+csi_snapshotter_image: "{{ docker_repo_address }}/ceph/csi-snapshotter:v4.1.1"
+csi_attacher_image: "{{ docker_repo_address }}/ceph/csi-attacher:v3.2.1"
+ceph_image: "{{ docker_repo_address }}/ceph/ceph:v15.2.13"
+
+ceph_apply_yaml_path: "/tmp/ceph"
+ceph_dashboard_address: "ceph.moumou.local"
+
+
+ceph_disk: "/dev/sda"
+
+
+

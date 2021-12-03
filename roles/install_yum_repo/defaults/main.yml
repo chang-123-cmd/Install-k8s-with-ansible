@@ -1,0 +1,9 @@
+---
+package_path: "/var/www/html/kubernetes"
+
+containerd_selinux_repo_tarball:  "../../../artifacts/containerd-selinux-v2.119.2.tar"
+docker_ce_repo_tarball: "../../../artifacts/docker-ce-stable-v20.10.7.tar"
+k8s_repo_tarball: "../../../artifacts/kubernetes-v1.21.2.tar"
+
+
+

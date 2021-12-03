@@ -1,0 +1,25 @@
+- name: inspect join commod
+  shell: kubeadm token create --print-join-command  > {{ k8s_apply_yaml_path }}/k8s_add_node.key
+  when: inventory_hostname in groups['kubernetes_master']
+
+- name: pull k8s_add_node file
+  fetch:  src={{ k8s_apply_yaml_path }}/k8s_add_node.key   dest=/tmp/k8s_add_node.key  flat=yes
+  when: inventory_hostname in groups['kubernetes_master']
+
+- name: push k8s_add_node file  to work node
+  copy: src=/tmp/k8s_add_node.key  dest={{ add_slave_key_path }}/
+  when: inventory_hostname  in groups['kubernetes_slaves']
+
+- name: check 10250 port
+  wait_for:
+    port: "10250"
+    delay: 10
+    timeout: 20
+  ignore_errors: True
+  register: check_port_output
+
+
+- name: Execute the add node instruction
+  shell: $(cat {{ add_slave_key_path }}/k8s_add_node.key)
+  when: inventory_hostname  in groups['kubernetes_slaves'] and check_port_output is failed
+

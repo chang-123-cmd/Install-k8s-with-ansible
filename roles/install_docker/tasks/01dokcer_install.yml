@@ -1,0 +1,12 @@
+- name: Set package install repo
+  template: src=../templates/kubernetes.repo.j2 dest=/etc/yum.repos.d/kubernetes.repo mode=0744
+
+- name: Install docker
+  package: name=docker-ce state=present
+
+- name: Create directory
+  file: path={{ docker_conf_path }} state=directory
+- name: Copy docker config
+  template: src=../templates/daemon.json.j2 dest={{ docker_conf_path }}/daemon.json mode=0744
+- name: Restart docker service
+  service: name=docker state=started enabled=yes

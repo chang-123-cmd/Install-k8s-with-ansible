@@ -1,0 +1,14 @@
+---
+
+#---------------------------------
+# 4. docker registry install
+#---------------------------------
+- hosts:
+    - registry
+  tasks:
+    - name: "Load artifacts info"
+      action: resolve_artifacts
+
+    - include_role: name=registry
+  vars_files:
+    - ../shared.yml

@@ -1,0 +1,21 @@
+---
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: ClusterConfiguration
+kubernetesVersion: v1.21.2
+imageRepository: {{ docker_repo_address }}/k8s
+controlPlaneEndpoint: "{{ kubernetes_api }}:6443"
+networking:
+  serviceSubnet: "10.96.0.0/16"
+  podSubnet: "10.100.0.1/16"
+  dnsDomain: "cluster.local"
+dns:
+  type: CoreDNS
+  imageRepository: {{ docker_repo_address }}/k8s
+  imageTag: 1.8.0
+
+---
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+cgroupDriver: systemd
+
+

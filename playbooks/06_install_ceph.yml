@@ -1,0 +1,28 @@
+---
+
+#---------------------------------
+# 6. ceph install
+#---------------------------------
+- hosts:
+    - kubernetes
+  tasks:
+    - name: "Load artifacts info"
+      action: resolve_artifacts
+
+    - include_role: name=ceph
+
+  vars_files:
+    - ../shared.yml
+
+
+
+
+
+
+
+
+
+
+
+
+

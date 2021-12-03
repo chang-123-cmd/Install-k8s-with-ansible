@@ -1,0 +1,86 @@
+- name: Install gdisk tool
+  package: name=gdisk state=present
+
+- name: Format storage disk
+  shell: sgdisk --zap-all {{ ceph_disk }}  && dd if=/dev/zero of={{ ceph_disk }} bs=1M status=progress 
+  ignore_errors: True
+
+- name: 
+  shell: partprobe {{ ceph_disk }}
+
+- name: check node number and remove taint
+  shell: if [ `kubectl get nodes  | grep none| wc -l` -le 2  ]; then     kubectl get node | grep master | awk '{print $1}'   | xargs -I {} kubectl taint nodes  {} node-role.kubernetes.io/master:NoSchedule-  ;fi
+  when: inventory_hostname  in groups['kubernetes_master_slaves'] or inventory_hostname  in groups['kubernetes_master']
+
+- name: Create ceph dir
+  file: path={{ ceph_apply_yaml_path }} state=directory
+  when: inventory_hostname  in groups['kubernetes_master']
+- name: Copy ceph-ingress config
+  template: src=../templates/ceph-ingress.yaml.j2 dest={{ ceph_apply_yaml_path }}/ceph-ingress.yaml mode=0744
+  when: inventory_hostname  in groups['kubernetes_master']
+- name: Copy ceph cluster config
+  template: src=../templates/cluster.yaml.j2 dest={{ ceph_apply_yaml_path }}/cluster.yaml mode=0744
+  when: inventory_hostname  in groups['kubernetes_master']
+- name: Copy ceph common config
+  template: src=../templates/common.yaml.j2 dest={{ ceph_apply_yaml_path }}/common.yaml mode=0744
+  when: inventory_hostname  in groups['kubernetes_master']
+- name: Copy ceph crds config
+  template: src=../templates/crds.yaml.j2 dest={{ ceph_apply_yaml_path }}/crds.yaml mode=0744
+  when: inventory_hostname  in groups['kubernetes_master']
+- name: Copy ceph filesystem config
+  template: src=../templates/filesystem.yaml.j2 dest={{ ceph_apply_yaml_path }}/filesystem.yaml  mode=0744
+  when: inventory_hostname  in groups['kubernetes_master']
+- name: Copy ceph operator config
+  template: src=../templates/operator.yaml.j2 dest={{ ceph_apply_yaml_path }}/operator.yaml mode=0744
+  when: inventory_hostname  in groups['kubernetes_master']
+- name: Copy ceph storageclass-cephfs config
+  template: src=../templates/storageclass-cephfs.yaml.j2 dest={{ ceph_apply_yaml_path }}/storageclass-cephfs.yaml mode=0744
+  when: inventory_hostname  in groups['kubernetes_master']
+- name: Copy ceph storageclass config
+  template: src=../templates/storageclass.yaml.j2 dest={{ ceph_apply_yaml_path }}/storageclass.yaml mode=0744
+  when: inventory_hostname  in groups['kubernetes_master']
+- name: Copy ceph toolbox config
+  template: src=../templates/toolbox.yaml.j2 dest={{ ceph_apply_yaml_path }}/toolbox.yaml mode=0744
+  when: inventory_hostname  in groups['kubernetes_master']
+
+
+- name: apply operator
+  shell: kubectl apply -f {{ ceph_apply_yaml_path }}/crds.yaml -f {{ ceph_apply_yaml_path }}/common.yaml -f {{ ceph_apply_yaml_path }}/operator.yaml
+  when: inventory_hostname  in groups['kubernetes_master']
+- name: install cluster
+  shell: kubectl apply -f {{ ceph_apply_yaml_path }}/cluster.yaml
+  when: inventory_hostname  in groups['kubernetes_master']
+- name: install tools
+  shell: kubectl apply -f {{ ceph_apply_yaml_path }}/toolbox.yaml
+  when: inventory_hostname  in groups['kubernetes_master']
+
+
+
+- name: install storageclass
+  shell: kubectl apply -f {{ ceph_apply_yaml_path }}/storageclass.yaml
+  when: inventory_hostname  in groups['kubernetes_master']
+
+- name: install filesystem
+  shell: kubectl apply -f {{ ceph_apply_yaml_path }}/filesystem.yaml
+  when: inventory_hostname  in groups['kubernetes_master']
+
+- name: install storageclass-cephfs
+  shell: kubectl apply -f {{ ceph_apply_yaml_path }}/storageclass-cephfs.yaml
+  when: inventory_hostname  in groups['kubernetes_master']
+
+- name: Set default storageclass
+  shell: kubectl patch storageclass rook-cephfs -p '{"metadata":{"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+  when: inventory_hostname  in groups['kubernetes_master']
+
+- name: Aplly ceph dashboard ingress
+  shell: kubectl apply -f {{ ceph_apply_yaml_path }}/ceph-ingress.yaml
+  when: inventory_hostname  in groups['kubernetes_master']
+
+
+- debug:
+    msg: "Please give the container 10 minutes to start up and check that all related PODs are running normally. "
+- name: Get the password of dashboard admin user
+  shell: sleep 600 &&  kubectl -n rook-ceph get secret rook-ceph-dashboard-password -o jsonpath="{['data']['password']}" | base64 --decode >  {{ ceph_apply_yaml_path }}/ceph.key
+  when: inventory_hostname  in groups['kubernetes_master']
+
+

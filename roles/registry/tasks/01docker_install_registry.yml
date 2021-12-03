@@ -1,0 +1,23 @@
+- name: create docker register data dir
+  file:  path={{ register_data_path }} state=directory
+- name: unzip package
+  unarchive: src={{ k8s_registry_tarball }}    dest={{ register_data_path }}/
+- name: load register image
+  shell: docker image  load  -i  {{ register_data_path }}/registry_image.tar
+
+- name: check 5000 port
+  wait_for:
+    port: "5000"
+    delay: 10
+    timeout: 20
+  ignore_errors: True
+  register: check_registry_port_output
+
+
+- name: docker run
+  shell: docker run -d -p 5000:5000 -v {{ register_data_path }}:/var/lib/registry --name   registry  {{ docker_repo_address }}/library/registry:2.7.1
+  ignore_errors: True
+  when: check_registry_port_output is failed
+
+- name: docker restart registry
+  shell: docker restart  registry

@@ -1,0 +1,60 @@
+- name: Create directory
+  file: path={{ k8s_apply_yaml_path }} state=directory
+  when: inventory_hostname  in groups['kubernetes_master']
+
+- name: Set kubeadm-config
+  template: src=../templates/kubeadm-config.yaml.j2 dest={{ k8s_apply_yaml_path }}/kubeadm-config.yaml mode=0744
+  when: inventory_hostname  in groups['kubernetes_master']
+
+- name: Pull master image
+  shell: kubeadm config images pull --config={{ k8s_apply_yaml_path }}/kubeadm-config.yaml
+  when: inventory_hostname  in groups['kubernetes_master']
+
+- name: check 10250 port
+  wait_for:
+    port: "10250"
+    delay: 10
+    timeout: 20
+  ignore_errors: True
+  register: check_master_port_output
+
+- name: Init master node
+  shell: kubeadm init   --config={{ k8s_apply_yaml_path }}/kubeadm-config.yaml --upload-certs
+  when: inventory_hostname  in groups['kubernetes_master'] and check_master_port_output is failed
+
+- name: create discovery token certs
+  command: kubeadm certs certificate-key
+  register: discovery_token_certs
+  ignore_errors: True
+  when: inventory_hostname  in groups['kubernetes_master']
+
+- name: Init master node against
+  shell: kubeadm init phase upload-certs --upload-certs --certificate-key={{ discovery_token_certs.stdout }}
+  when: inventory_hostname  in groups['kubernetes_master']
+
+
+
+- name: Set kubectl config
+  shell: rm -rf $HOME/.kube/ && mkdir -p $HOME/.kube  && sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config && sudo chown $(id -u):$(id -g) $HOME/.kube/config
+  when: inventory_hostname  in groups['kubernetes_master']
+
+- name: install bash-completion
+  package: name=bash-completion state=present
+  when: inventory_hostname  in groups['kubernetes_master']
+
+- name: set config
+  shell: grep -q "kubectl completion bash" ~/.bashrc || echo 'source <(kubectl completion bash)' >>~/.bashrc
+  when: inventory_hostname  in groups['kubernetes_master']
+
+- name: copy calico yaml file
+  template: src=../templates/calico.yaml.j2  dest={{ k8s_apply_yaml_path }}/calico.yaml
+  when: inventory_hostname  in groups['kubernetes_master']
+- name: Install calico network
+  shell: kubectl apply -f {{ k8s_apply_yaml_path }}/calico.yaml
+  when: inventory_hostname  in groups['kubernetes_master']
+
+
+
+
+
+
