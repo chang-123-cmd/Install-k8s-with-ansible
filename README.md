@@ -4,7 +4,7 @@
 * <a href="#demo1"> project describe function </a>
 * <a href="#demo2"> Instructions </a>
 
-## project describe function
+## The detail project  function
 ### 1.prepare work
    * ntp
    * chrony
@@ -132,7 +132,7 @@ ansible-playbook ./playbooks/01_prepare.yml -C
 ```
 
 ### 6. issue
-#### 1.When the running is interrupted, you want to repeat it.
+#### 1.When the running is interrupted, you need  repeat it.
 
 #### 2.ceph安装用简单的块设备就可以识别
 
